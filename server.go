@@ -4,7 +4,7 @@ import (
 	"github.com/ngmoco/falcore"
 )
 
-func Server() *falcore.Server {
+func Server(port int) *falcore.Server {
 	pipe := falcore.NewPipeline()
 
 	methodFilter := NewRequestMethodFilter()
@@ -16,5 +16,5 @@ func Server() *falcore.Server {
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
 
-	return falcore.NewServer(8080, pipe)
+	return falcore.NewServer(port, pipe)
 }

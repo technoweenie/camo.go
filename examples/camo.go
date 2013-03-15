@@ -6,7 +6,7 @@ import (
 )
 
 func main() {
-	server := camo.Server()
+	server := camo.Server(8080)
 
 	if err := server.ListenAndServe(); err != nil {
 		fmt.Println("Could not start server:", err)
