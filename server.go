@@ -5,6 +5,7 @@ import (
 )
 
 func Server(port int) *falcore.Server {
+	userAgent := "camo.go"
 	pipe := falcore.NewPipeline()
 
 	methodFilter := NewRequestMethodFilter()
@@ -15,6 +16,9 @@ func Server(port int) *falcore.Server {
 	emptyFilter.AddPath("/")
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
+
+	viaFilter := NewViaFilter(userAgent)
+	pipe.Upstream.PushBack(viaFilter)
 
 	return falcore.NewServer(port, pipe)
 }

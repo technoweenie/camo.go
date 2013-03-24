@@ -3,6 +3,7 @@ package camo
 import (
 	"github.com/ngmoco/falcore"
 	"net/http"
+	"strings"
 )
 
 type SimplePathFilter struct {
@@ -46,6 +47,20 @@ func (filter *RequestMethodFilter) FilterRequest(req *falcore.Request) *http.Res
 	if filter.AllowedMethods[req.HttpRequest.Method] {
 		return nil
 	}
-	return falcore.SimpleResponse(req.HttpRequest, 406, nil, filter.Body)
 	return falcore.SimpleResponse(req.HttpRequest, 405, nil, filter.Body)
+}
+
+type ViaFilter struct {
+	UserAgent string
+}
+
+func NewViaFilter(ua string) *ViaFilter {
+	return &ViaFilter{ua}
+}
+
+func (filter *ViaFilter) FilterRequest(req *falcore.Request) *http.Response {
+	if strings.HasPrefix(req.HttpRequest.Header.Get("Via"), filter.UserAgent) {
+		return falcore.SimpleResponse(req.HttpRequest, 403, nil, "Requesting from self")
+	}
+	return nil
 }
