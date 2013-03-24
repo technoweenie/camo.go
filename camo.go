@@ -76,6 +76,7 @@ func (filter *CamoFilter) proxyResponse(req *falcore.Request, clientRes *http.Re
 	res.Request = req.HttpRequest
 	res.Header = make(http.Header)
 	res.Body = clientRes.Body
+	defer clientRes.Body.Close()
 
 	if contentLength != "" {
 		res.Header.Set("Content-Length", contentLength)
