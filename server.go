@@ -16,12 +16,8 @@ func Server(port int) *falcore.Server {
 	emptyFilter.AddPath("/")
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
-
-	viaFilter := NewViaFilter(userAgent)
-	pipe.Upstream.PushBack(viaFilter)
-
-	camoFilter := NewCamoFilter(userAgent)
-	pipe.Upstream.PushBack(camoFilter)
+	pipe.Upstream.PushBack(NewViaFilter(userAgent))
+	pipe.Upstream.PushBack(NewCamoFilter(userAgent))
 
 	return falcore.NewServer(port, pipe)
 }
