@@ -4,8 +4,16 @@ import (
 	"github.com/ngmoco/falcore"
 )
 
-func Server(port int) *falcore.Server {
-	userAgent := "camo.go"
+type Server struct {
+	Port      int
+	UserAgent string
+}
+
+func NewServer(port int) *Server {
+	return &Server{port, "camo.go"}
+}
+
+func (server *Server) ListenAndServe() error {
 	pipe := falcore.NewPipeline()
 
 	methodFilter := NewRequestMethodFilter()
@@ -16,8 +24,8 @@ func Server(port int) *falcore.Server {
 	emptyFilter.AddPath("/")
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
-	pipe.Upstream.PushBack(NewViaFilter(userAgent))
-	pipe.Upstream.PushBack(NewCamoFilter(userAgent))
+	pipe.Upstream.PushBack(NewViaFilter(server.UserAgent))
+	pipe.Upstream.PushBack(NewCamoFilter(server.UserAgent))
 
-	return falcore.NewServer(port, pipe)
+	return falcore.NewServer(server.Port, pipe).ListenAndServe()
 }
