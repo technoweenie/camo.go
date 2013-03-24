@@ -47,4 +47,5 @@ func (filter *RequestMethodFilter) FilterRequest(req *falcore.Request) *http.Res
 		return nil
 	}
 	return falcore.SimpleResponse(req.HttpRequest, 406, nil, filter.Body)
+	return falcore.SimpleResponse(req.HttpRequest, 405, nil, filter.Body)
 }
