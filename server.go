@@ -20,5 +20,8 @@ func Server(port int) *falcore.Server {
 	viaFilter := NewViaFilter(userAgent)
 	pipe.Upstream.PushBack(viaFilter)
 
+	camoFilter := NewCamoFilter(userAgent)
+	pipe.Upstream.PushBack(camoFilter)
+
 	return falcore.NewServer(port, pipe)
 }
