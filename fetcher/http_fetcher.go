@@ -40,7 +40,6 @@ func (fetcher *HttpFetcher) buildClientRequest(req *falcore.Request, url string)
   cli, err := http.NewRequest("GET", url, nil)
   if err != nil {
     return nil, err
-
   }
 
   accept := req.HttpRequest.Header.Get("Accept")
