@@ -32,7 +32,9 @@ func (fetched *Response) HttpResponse() *http.Response {
 }
 
 func Respond(req *falcore.Request, status int, body io.ReadCloser) *Response {
-  return &Response{req, status, body, 0, nil}
+  header := make(http.Header)
+  header.Set("X-Content-Type-Options", "nosniff")
+  return &Response{req, status, body, 0, header}
 }
 
 func Error(req *falcore.Request, status int, body string) *Response {

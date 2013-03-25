@@ -74,7 +74,6 @@ func (fetcher *HttpFetcher) proxyResponse(req *falcore.Request, clientRes *http.
 
   res := Respond(req, 200, clientRes.Body)
   res.BodyLength = len
-  res.Header = make(http.Header)
 
   if contentLength != "" {
     res.Header.Set("Content-Length", contentLength)
@@ -93,7 +92,6 @@ func (fetcher *HttpFetcher) proxyResponse(req *falcore.Request, clientRes *http.
 
   res.Header.Set("Content-Type", clientRes.Header.Get("Content-Type"))
   res.Header.Set("Cache-Control", cacheControl)
-  res.Header.Set("X-Content-Type-Options", "nosniff")
 
   return res
 }
