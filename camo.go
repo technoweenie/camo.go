@@ -5,6 +5,7 @@ import (
 	"github.com/ngmoco/falcore"
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 type CamoFilter struct {
@@ -22,8 +23,14 @@ func (filter *CamoFilter) FilterRequest(req *falcore.Request) *http.Response {
 }
 
 func (filter *CamoFilter) getUrlFromRequest(req *falcore.Request) string {
-	url := "https://f.cloud.github.com/assets/21/228013/635f6528-8672-11e2-8426-7517f5480715.gif"
-	return url
+	urlPieces := strings.SplitN(req.HttpRequest.URL.Path[1:], "/", 2)
+	digest := urlPieces[0]
+
+	query := req.HttpRequest.URL.Query()
+	fmt.Println(digest)
+	fmt.Println(query.Get("url"))
+
+	return query.Get("url")
 }
 
 func (filter *CamoFilter) processUrl(req *falcore.Request, url string) *http.Response {

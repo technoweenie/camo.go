@@ -1,0 +1,2 @@
+# go run examples/digest.go --secret monkey --url=https://f.cloud.github.com/assets/21/228013/635f6528-8672-11e2-8426-7517f5480715.gif
+curl -i http://localhost:8080/d3ba790ecf4edac2c9b44e0e35c22af0e6963f68?url=https%3A%2F%2Ff.cloud.github.com%2Fassets%2F21%2F228013%2F635f6528-8672-11e2-8426-7517f5480715.gif
