@@ -13,12 +13,12 @@ type Fetcher interface {
 }
 
 type CamoFilter struct {
-	userAgent  *string
-	httpClient *http.Client
+	digest    *Digest
+	userAgent *string
 }
 
-func NewCamoFilter(ua string) *CamoFilter {
-	return &CamoFilter{&ua, &http.Client{}}
+func NewCamoFilter(key, ua string) *CamoFilter {
+	return &CamoFilter{NewDigest(key), &ua}
 }
 
 func (filter *CamoFilter) UserAgent() string {
@@ -27,18 +27,27 @@ func (filter *CamoFilter) UserAgent() string {
 
 func (filter *CamoFilter) FilterRequest(req *falcore.Request) *http.Response {
 	req.HttpRequest.Header.Del("Cookie")
-	url := filter.getUrlFromRequest(req)
+	url, err := filter.getUrlFromRequest(req)
+	if err != nil {
+		return falcore.SimpleResponse(req.HttpRequest, 403, nil, err.Error())
+	}
+
 	f := fetcher.NewHttpFetcher(filter)
 	res := f.Fetch(req, url).HttpResponse()
 	return res
 }
 
-func (filter *CamoFilter) getUrlFromRequest(req *falcore.Request) string {
+func (filter *CamoFilter) getUrlFromRequest(req *falcore.Request) (string, error) {
 	urlPieces := strings.SplitN(req.HttpRequest.URL.Path[1:], "/", 2)
-	digest := urlPieces[0]
-
+	expected := urlPieces[0]
 	query := req.HttpRequest.URL.Query()
-	fmt.Println(digest)
+	url := query.Get("url")
+	actual := filter.digest.Calculate(url)
 
-	return query.Get("url")
+	if actual == expected {
+		return url, nil
+	}
+	err := fmt.Errorf("checksum mismatch for %s\n%s != %s", url, expected, actual)
+	fmt.Printf("%T / %s\n", err, err)
+	return url, err
 }

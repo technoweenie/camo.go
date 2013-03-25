@@ -5,12 +5,13 @@ import (
 )
 
 type Server struct {
+	key       string
 	Port      int
 	UserAgent string
 }
 
-func NewServer(port int) *Server {
-	return &Server{port, "camo.go"}
+func NewServer(key string, port int) *Server {
+	return &Server{key, port, "camo.go"}
 }
 
 func (server *Server) ListenAndServe() error {
@@ -25,7 +26,7 @@ func (server *Server) ListenAndServe() error {
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
 	pipe.Upstream.PushBack(NewViaFilter(server.UserAgent))
-	pipe.Upstream.PushBack(NewCamoFilter(server.UserAgent))
+	pipe.Upstream.PushBack(NewCamoFilter(server.key, server.UserAgent))
 
 	return falcore.NewServer(server.Port, pipe).ListenAndServe()
 }
