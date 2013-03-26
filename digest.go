@@ -6,6 +6,10 @@ import (
 	"encoding/hex"
 )
 
+type DigestCalculator interface {
+	Calculate(value string) string
+}
+
 type Digest struct {
 	key string
 }

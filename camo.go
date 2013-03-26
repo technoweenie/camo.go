@@ -13,7 +13,7 @@ type Fetcher interface {
 }
 
 type CamoFilter struct {
-	digest    *Digest
+	Digest    DigestCalculator
 	userAgent *string
 }
 
@@ -42,7 +42,7 @@ func (filter *CamoFilter) getUrlFromRequest(req *falcore.Request) (string, error
 	expected := urlPieces[0]
 	query := req.HttpRequest.URL.Query()
 	url := query.Get("url")
-	actual := filter.digest.Calculate(url)
+	actual := filter.Digest.Calculate(url)
 
 	if actual == expected {
 		return url, nil
