@@ -6,9 +6,10 @@ import (
 )
 
 func main() {
-	server := camo.NewServer("monkey", 8080)
+	server := camo.NewServer()
+	server.SetDigestKey("monkey")
 
-	if err := server.ListenAndServe(); err != nil {
+	if err := server.ListenAndServe(8080); err != nil {
 		fmt.Println("Could not start server:", err)
 	}
 }

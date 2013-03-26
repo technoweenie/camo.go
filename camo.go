@@ -13,12 +13,12 @@ type Fetcher interface {
 }
 
 type CamoFilter struct {
-	Digest    DigestCalculator
 	userAgent *string
+	Digest    DigestCalculator
 }
 
-func NewCamoFilter(key, ua string) *CamoFilter {
-	return &CamoFilter{NewDigest(key), &ua}
+func NewCamoFilter(ua string) *CamoFilter {
+	return &CamoFilter{&ua, nil}
 }
 
 func (filter *CamoFilter) UserAgent() string {

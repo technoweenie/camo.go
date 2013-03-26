@@ -5,16 +5,14 @@ import (
 )
 
 type Server struct {
-	key       string
-	Port      int
-	UserAgent string
+	Camo *CamoFilter
 }
 
-func NewServer(key string, port int) *Server {
-	return &Server{key, port, "camo.go"}
+func NewServer() *Server {
+	return &Server{NewCamoFilter("camo.go")}
 }
 
-func (server *Server) ListenAndServe() error {
+func (server *Server) ListenAndServe(port int) error {
 	pipe := falcore.NewPipeline()
 
 	methodFilter := NewRequestMethodFilter()
@@ -25,8 +23,16 @@ func (server *Server) ListenAndServe() error {
 	emptyFilter.AddPath("/")
 	emptyFilter.AddPath("/favicon.ico")
 	pipe.Upstream.PushBack(emptyFilter)
-	pipe.Upstream.PushBack(NewViaFilter(server.UserAgent))
-	pipe.Upstream.PushBack(NewCamoFilter(server.key, server.UserAgent))
+	pipe.Upstream.PushBack(NewViaFilter(server.Camo.UserAgent()))
+	pipe.Upstream.PushBack(server.Camo)
 
-	return falcore.NewServer(server.Port, pipe).ListenAndServe()
+	return falcore.NewServer(port, pipe).ListenAndServe()
+}
+
+func (server *Server) SetDigest(digest DigestCalculator) {
+	server.Camo.Digest = digest
+}
+
+func (server *Server) SetDigestKey(key string) {
+	server.SetDigest(NewDigest(key))
 }
